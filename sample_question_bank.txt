@@ -1,0 +1,79 @@
+DARAJA: oson
+1) 안녕하세요 nimani bildiradi?
+A) Salom
+B) Rahmat
+C) Kechirasiz
+D) Xayr
+JAVOB: A
+
+DARAJA: oson
+2) 감사합니다 nimani bildiradi?
+A) Iltimos
+B) Rahmat
+C) Salom
+D) Xayr
+JAVOB: B
+
+DARAJA: oson
+3) 물 so'zi nimani bildiradi?
+A) Non
+B) Sut
+C) Olma
+D) Suv
+JAVOB: D
+
+DARAJA: oson
+4) 학교 so'zi nimani bildiradi?
+A) Maktab
+B) Uy
+C) Do'kon
+D) Bog'cha
+JAVOB: A
+
+DARAJA: orta
+5) '~는 것 같다' qachon ishlatiladi?
+A) Buyruq berishda
+B) Taxmin qilishda
+C) So'rashda
+D) Rad etishda
+JAVOB: B
+
+DARAJA: orta
+6) '결심하다' so'zining ma'nosi?
+A) Qaror qabul qilmoq
+B) Tushunmoq
+C) Unutmoq
+D) Yordam berish
+JAVOB: A
+
+DARAJA: orta
+7) '환경 보호' iborasi nimani bildiradi?
+A) Atrof-muhitni muhofaza qilish
+B) Sayohat qilish
+C) Ishlab chiqarish
+D) Tarbiyalash
+JAVOB: A
+
+DARAJA: qiyin
+8) '~다시피' grammatikasi qanday ishlatiladi?
+A) Bilganingizdek...
+B) Agar...
+C) Garchi...
+D) Chunki...
+JAVOB: A
+
+DARAJA: qiyin
+9) '간과하다' so'zining ma'nosi?
+A) E'tibordan chetda qoldirmoq
+B) Diqqat qilmoq
+C) Tahlil qilmoq
+D) Rad etmoq
+JAVOB: A
+
+DARAJA: qiyin
+10) '여론' so'zining ma'nosi?
+A) Jamoatchilik fikri
+B) Shaxsiy fikr
+C) Rasmiy hujjat
+D) Ilmiy maqola
+JAVOB: A

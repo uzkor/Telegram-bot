@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>한국어 — Koreys tili</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root {
+    --ink: #1B3A2B;
+    --pine: #2D6A4F;
+    --pine-soft: #DCEDE1;
+    --cream: #FBF7EE;
+    --paper: #FFFFFF;
+    --gold: #C9A24B;
+    --gold-soft: #F3E6C4;
+    --line: #E4DDC9;
+    --text-dim: #6B7A70;
+    --danger: #B5533C;
+    --radius: 18px;
+    --radius-sm: 12px;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Pretendard', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    padding-bottom: 90px;
+  }
+
+  /* ===== Header ===== */
+  .header {
+    padding: 28px 20px 22px;
+    background: linear-gradient(135deg, var(--pine) 0%, #1F4D38 100%);
+    color: #fff;
+    border-radius: 0 0 28px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: "한";
+    position: absolute;
+    right: -10px; top: -30px;
+    font-size: 160px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.06);
+    font-family: 'Noto Serif KR', serif;
+    line-height: 1;
+  }
+  .header-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    margin: 0 0 6px;
+    font-weight: 600;
+  }
+  .header-title {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    letter-spacing: 0.01em;
+  }
+  .header-sub {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.78);
+    margin: 0;
+    max-width: 80%;
+  }
+
+  /* ===== Section wrapper ===== */
+  .section {
+    padding: 22px 18px 4px;
+  }
+  .section-label {
+    font-size: 11.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 700;
+    margin: 0 0 12px 4px;
+  }
+
+  /* ===== Main menu cards ===== */
+  .menu-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .menu-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 18px;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+    text-decoration: none;
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(27,58,43,0.04);
+  }
+  .menu-card:active {
+    transform: scale(0.98);
+    background: var(--pine-soft);
+  }
+  .menu-icon {
+    width: 50px; height: 50px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .menu-icon.books { background: var(--gold-soft); }
+  .menu-icon.lessons { background: var(--pine-soft); }
+  .menu-icon.admin { background: #F1E4DD; }
+
+  .menu-text { flex: 1; min-width: 0; }
+  .menu-title {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 2px;
+  }
+  .menu-desc {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin: 0;
+  }
+  .menu-arrow {
+    color: var(--text-dim);
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  /* ===== Page system ===== */
+  .page {
+    display: none;
+    animation: fadeIn 0.18s ease;
+  }
+  .page.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-header {
+    padding: 18px 18px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .back-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+  .back-btn:active { background: var(--pine-soft); }
+  .page-title {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  /* ===== Books list ===== */
+  .book-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+  }
+  .book-row:active { transform: scale(0.98); background: var(--pine-soft); }
+  .book-cover {
+    width: 52px; height: 70px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    font-family: 'Noto Serif KR', serif;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 2px 6px rgba(27,58,43,0.15);
+  }
+  .book-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .book-info { flex: 1; min-width: 0; }
+  .book-name {
+    font-size: 14.5px;
+    font-weight: 700;
+    margin: 0 0 3px;
+    line-height: 1.3;
+  }
+  .book-meta {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    margin: 0 0 4px;
+  }
+  .book-price {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--gold);
+    margin: 0;
+  }
+  .book-price.free {
+    color: #2D6A4F;
+  }
+  .book-go {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--pine);
+    border: 1px solid var(--pine);
+    border-radius: 20px;
+    padding: 6px 12px;
+    flex-shrink: 0;
+    background: var(--pine-soft);
+  }
+
+  /* ===== Section group title in books list ===== */
+  .group-title {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin: 18px 4px 10px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .group-title .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: inline-block;
+  }
+
+  /* ===== Lessons (level cards) ===== */
+  .level-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .level-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 14px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .level-card:active { background: var(--pine-soft); transform: scale(0.97); }
+  .level-card.full { grid-column: 1 / -1; text-align: left; display: flex; align-items: center; gap: 14px; }
+  .level-kr {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--pine);
+    margin: 0 0 4px;
+  }
+  .level-name {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin: 0;
+  }
+  .level-card.full .level-kr { font-size: 18px; margin: 0; color: var(--gold); }
+  .level-card.full .level-tag {
+    flex: 1;
+  }
+  .level-card.full .level-name { margin-top: 2px; }
+
+  /* ===== Lesson detail list ===== */
+  .lesson-item {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .lesson-item h4 {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 14.5px;
+    margin: 0 0 6px;
+  }
+  .lesson-item p {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin: 0 0 10px;
+    line-height: 1.5;
+  }
+  .lesson-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .lesson-link {
+    font-size: 11.5px;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 7px 13px;
+    text-decoration: none;
+    border: 1px solid var(--line);
+  }
+  .lesson-link.video { color: #B5533C; border-color: #EFD3C8; background: #FBF0EB; }
+  .lesson-link.book { color: var(--pine); border-color: var(--pine-soft); background: var(--pine-soft); }
+
+  /* ===== Admin ===== */
+  .admin-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .admin-card h4 {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 15px;
+    margin: 0 0 8px;
+  }
+  .admin-card p {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin: 0;
+    line-height: 1.6;
+  }
+  .admin-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .admin-row:last-child { border-bottom: none; }
+  .admin-row .lbl { color: var(--text-dim); }
+  .admin-row .val { font-weight: 700; }
+  .pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--pine-soft);
+    color: var(--pine);
+  }
+  .pill.warn { background: var(--gold-soft); color: #8A6A1F; }
+
+  .admin-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 13px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 8px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .admin-btn:active { opacity: 0.85; }
+  .admin-btn.secondary {
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+
+  /* ===== Empty / toast ===== */
+  /* ===== Book detail page ===== */
+  .book-detail-cover {
+    width: 100%;
+    max-width: 220px;
+    aspect-ratio: 400/560;
+    border-radius: var(--radius);
+    margin: 0 auto 18px;
+    display: block;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(27,58,43,0.18);
+  }
+  .book-detail-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .book-detail-title {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 21px;
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 4px;
+  }
+  .book-detail-price {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--gold);
+    margin: 0 0 18px;
+  }
+  .book-detail-desc {
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.7;
+    margin: 0 0 22px;
+    padding: 0 4px;
+  }
+  .order-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: var(--pine);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .order-btn:active { opacity: 0.85; transform: scale(0.99); }
+
+  /* ===== Phone input modal ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(27,58,43,0.45);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 200;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-sheet {
+    background: var(--paper);
+    width: 100%;
+    max-width: 480px;
+    border-radius: 24px 24px 0 0;
+    padding: 24px 20px 28px;
+    animation: slideUp 0.2s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+  .modal-title {
+    font-family: 'Noto Serif KR', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+  .modal-sub {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin: 0 0 16px;
+  }
+  .modal-input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    margin-bottom: 14px;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+  .modal-input:focus { outline: none; border-color: var(--pine); }
+  .modal-actions { display: flex; gap: 10px; }
+  .modal-btn {
+    flex: 1;
+    padding: 13px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .modal-btn.cancel { background: var(--cream); color: var(--ink); border: 1px solid var(--line); }
+  .modal-btn.confirm { background: var(--pine); color: #fff; }
+
+  .empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .empty .emoji { font-size: 36px; display: block; margin-bottom: 10px; }
+
+  .toast {
+    position: fixed;
+    bottom: 20px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.25s ease;
+    z-index: 100;
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= HOME PAGE ================= -->
+<div class="page active" id="page-home">
+  <div class="header">
+    <p class="header-eyebrow">UZKOREAN · 우즈코리안</p>
+    <h1 class="header-title">한국어 학습</h1>
+    <p class="header-sub">Koreys tilini o'rganish uchun kitoblar, video darslar va shaxsiy yordamchi — barchasi bitta joyda.</p>
+  </div>
+
+  <div class="section">
+    <p class="section-label">Bo'limlar</p>
+    <div class="menu-grid">
+
+      <div class="menu-card" onclick="goPage('page-books')">
+        <div class="menu-icon books">📚</div>
+        <div class="menu-text">
+          <p class="menu-title">Kitoblar</p>
+          <p class="menu-desc">TOPIK, EPS-TOPIK, grammatika va lug'at kitoblari (PDF)</p>
+        </div>
+        <div class="menu-arrow">›</div>
+      </div>
+
+      <div class="menu-card" onclick="goPage('page-lessons')">
+        <div class="menu-icon lessons">🎬</div>
+        <div class="menu-text">
+          <p class="menu-title">Online dars</p>
+          <p class="menu-desc">초급 · 중급 · 고급 · TOPIK darajalariga mos video va matnlar</p>
+        </div>
+        <div class="menu-arrow">›</div>
+      </div>
+
+      <div class="menu-card" id="admin-card" onclick="goPage('page-admin')" style="display:none;">
+        <div class="menu-icon admin">⚙️</div>
+        <div class="menu-text">
+          <p class="menu-title">Admin</p>
+          <p class="menu-desc">Bot statistikasi, test bazasi va boshqaruv</p>
+        </div>
+        <div class="menu-arrow">›</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="section-label">Daraja testi</p>
+    <div class="menu-grid">
+      <div class="menu-card" onclick="sendToBot('start_test')">
+        <div class="menu-icon lessons">📝</div>
+        <div class="menu-text">
+          <p class="menu-title">Darajangizni aniqlang</p>
+          <p class="menu-desc">10 ta savol — natijaga qarab tavsiya va kanal beriladi</p>
+        </div>
+        <div class="menu-arrow">›</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================= BOOKS PAGE ================= -->
+<div class="page" id="page-books">
+  <div class="page-header">
+    <div class="back-btn" onclick="goHome()">‹</div>
+    <h2 class="page-title">📚 Kitoblar</h2>
+  </div>
+
+  <div class="section" id="books-list">
+    <!-- JS orqali to'ldiriladi -->
+  </div>
+</div>
+
+
+<!-- ================= BOOK DETAIL PAGE ================= -->
+<div class="page" id="page-book-detail">
+  <div class="page-header">
+    <div class="back-btn" onclick="goPage('page-books')">‹</div>
+    <h2 class="page-title" id="book-detail-header">Kitob</h2>
+  </div>
+
+  <div class="section">
+    <div class="book-detail-cover" id="book-detail-cover"></div>
+    <p class="book-detail-title" id="book-detail-title"></p>
+    <p class="book-detail-price" id="book-detail-price"></p>
+    <p class="book-detail-desc" id="book-detail-desc"></p>
+    <button class="order-btn" id="book-detail-order-btn">📩 Buyurtma berish</button>
+  </div>
+</div>
+
+
+
+<!-- ================= LESSONS PAGE (levels) ================= -->
+<div class="page" id="page-lessons">
+  <div class="page-header">
+    <div class="back-btn" onclick="goHome()">‹</div>
+    <h2 class="page-title">🎬 Online dars</h2>
+  </div>
+
+  <div class="section">
+    <p class="section-label">Darajangizni tanlang</p>
+    <div class="level-grid">
+      <div class="level-card" onclick="goLevel('초급')">
+        <p class="level-kr">초급</p>
+        <p class="level-name">Boshlang'ich</p>
+      </div>
+      <div class="level-card" onclick="goLevel('중급')">
+        <p class="level-kr">중급</p>
+        <p class="level-name">O'rta</p>
+      </div>
+      <div class="level-card" onclick="goLevel('고급')">
+        <p class="level-kr">고급</p>
+        <p class="level-name">Yuqori</p>
+      </div>
+      <div class="level-card full" onclick="goLevel('TOPIK')">
+        <div class="level-tag">
+          <p class="level-kr">TOPIK</p>
+          <p class="level-name">Imtihonga tayyorgarlik (I–II)</p>
+        </div>
+        <div class="menu-arrow">›</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="level-detail" style="display:none;">
+    <p class="section-label" id="level-detail-label">Darslar</p>
+    <div id="level-detail-content"></div>
+  </div>
+</div>
+
+
+<!-- ================= ADMIN PAGE ================= -->
+<div class="page" id="page-admin">
+  <div class="page-header">
+    <div class="back-btn" onclick="goHome()">‹</div>
+    <h2 class="page-title">⚙️ Admin panel</h2>
+  </div>
+
+  <div class="section">
+    <div class="admin-card">
+      <h4>📊 Statistika</h4>
+      <div class="admin-row"><span class="lbl">Ro'yxatdan o'tganlar</span><span class="val" id="stat-users">—</span></div>
+      <div class="admin-row"><span class="lbl">초급</span><span class="val" id="stat-cho">—</span></div>
+      <div class="admin-row"><span class="lbl">중급</span><span class="val" id="stat-jung">—</span></div>
+      <div class="admin-row"><span class="lbl">고급</span><span class="val" id="stat-go">—</span></div>
+    </div>
+
+    <div class="admin-card">
+      <h4>🗂 Savollar bazasi</h4>
+      <div class="admin-row"><span class="lbl">Holati</span><span class="pill" id="stat-bank-status">Tekshirilmoqda...</span></div>
+      <div class="admin-row"><span class="lbl">초급 (oson)</span><span class="val" id="stat-bank-cho">—</span></div>
+      <div class="admin-row"><span class="lbl">중급 (orta)</span><span class="val" id="stat-bank-jung">—</span></div>
+      <div class="admin-row"><span class="lbl">고급 (qiyin)</span><span class="val" id="stat-bank-go">—</span></div>
+      <p style="margin-top:10px;">Yangi savollar bazasini yuklash uchun .txt faylni botga shaxsiy chatda yuboring.</p>
+    </div>
+
+    <div class="admin-card">
+      <h4>📅 Kunlik test (guruh)</h4>
+      <p>Har kuni soat 20:00da guruhga 10 ta random savol so'rovnoma (poll) shaklida yuboriladi, 20:45da reyting e'lon qilinadi.</p>
+      <button class="admin-btn" onclick="sendToBot('test_yubor')">Hozir yuborish (sinov)</button>
+      <button class="admin-btn secondary" onclick="sendToBot('reyting')">Reytingni e'lon qilish</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-overlay" id="phone-modal">
+  <div class="modal-sheet">
+    <p class="modal-title">📞 Bog'lanish uchun raqam</p>
+    <p class="modal-sub">Buyurtmangizni tasdiqlash uchun admin shu raqam orqali siz bilan bog'lanadi.</p>
+    <input type="tel" class="modal-input" id="phone-input" placeholder="+998 90 123 45 67">
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closePhoneModal()">Bekor qilish</button>
+      <button class="modal-btn confirm" onclick="confirmOrder()">Yuborish</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const tg = window.Telegram?.WebApp;
+  if (tg) { tg.ready(); tg.expand(); }
+
+  // ---- Admin tekshirish ----
+  const ADMIN_ID = 988635477;
+  try {
+    const user = tg?.initDataUnsafe?.user;
+    if (user && user.id === ADMIN_ID) {
+      document.getElementById('admin-card').style.display = 'flex';
+      loadAdminStats();
+    }
+  } catch (e) {}
+
+  // ---- Navigatsiya ----
+  function goPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (tg) tg.BackButton.show();
+  }
+  function goHome() {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-home').classList.add('active');
+    document.getElementById('level-detail').style.display = 'none';
+    if (tg) tg.BackButton.hide();
+  }
+  if (tg) {
+    tg.BackButton.onClick(() => goHome());
+  }
+
+  // ---- Toast ----
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // ---- Botga xabar yuborish (bot tomonida web_app_data sifatida qabul qilinadi) ----
+  function sendToBot(action, payload) {
+    const data = JSON.stringify({ action, payload: payload || null });
+    if (tg && tg.sendData) {
+      tg.sendData(data);
+    } else {
+      showToast("Bu funksiya faqat Telegram ichida ishlaydi");
+    }
+  }
+
+  // ---- Kitoblar ma'lumotlar bazasi: 20ta TOPIK kitobi, narxlar har kuni avtomatik o'zgaradi ----
+
+  // Sodda kun-asosli random generator (har kuni bir xil natija beradi, ertasi kuni yangilanadi)
+  function seededRandom(seed) {
+    let x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+  }
+
+  function todaySeed(bookIndex) {
+    const today = new Date();
+    const dayNum = today.getFullYear() * 1000 + dayOfYear(today);
+    return dayNum * 97 + bookIndex * 13;
+  }
+
+  function dayOfYear(date) {
+    const start = new Date(date.getFullYear(), 0, 0);
+    const diff = date - start;
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
+  }
+
+  function generateBookPrice(bookIndex) {
+    const r = seededRandom(todaySeed(bookIndex));
+    if (r < 0.2) {
+      return { price: "🎉 AKSIYA: Bugun BEPUL", isFree: true };
+    }
+    const priceVal = 29000 + Math.floor(seededRandom(todaySeed(bookIndex) + 1) * 22) * 1000; // 29000-50000, 1000 qadam
+    const formatted = priceVal.toLocaleString('de-DE') + " so'm";
+    return { price: formatted, isFree: false };
+  }
+
+  const BOOKS_DATA = {};
+  for (let i = 1; i <= 20; i++) {
+    const pricing = generateBookPrice(i);
+    BOOKS_DATA["book" + i] = {
+      name: `TOPIK ${i}-kitob`,
+      group: "TOPIK kitoblar",
+      cover: `covers/${i}.jpeg`,
+      price: pricing.price,
+      isFree: pricing.isFree,
+      desc: `TOPIK imtihoniga tayyorgarlik uchun ${i}-kitob. Lug'at, grammatika va namuna testlar bilan to'liq qo'llanma.`
+    };
+  }
+
+  // ---- Kitoblar ro'yxatini render qilish ----
+  function renderBooksList() {
+    const container = document.getElementById('books-list');
+    container.innerHTML = "";
+    let currentGroup = null;
+
+    Object.entries(BOOKS_DATA).forEach(([id, b]) => {
+      if (b.group !== currentGroup) {
+        currentGroup = b.group;
+        const groupTitle = document.createElement('div');
+        groupTitle.className = 'group-title';
+        groupTitle.innerHTML = `<span class="dot"></span> ${currentGroup}`;
+        container.appendChild(groupTitle);
+      }
+      const row = document.createElement('div');
+      row.className = 'book-row';
+      row.onclick = () => openBookDetail(id);
+      row.innerHTML = `
+        <div class="book-cover"><img src="${b.cover}" alt="${b.name}"></div>
+        <div class="book-info">
+          <p class="book-name">${b.name}</p>
+          <p class="book-price${b.isFree ? ' free' : ''}">${b.price}</p>
+        </div>
+        <div class="book-go">Ko'rish</div>
+      `;
+      container.appendChild(row);
+    });
+  }
+  renderBooksList();
+
+  let currentBookId = null;
+
+  function openBookDetail(bookId) {
+    const b = BOOKS_DATA[bookId];
+    if (!b) return;
+    currentBookId = bookId;
+
+    document.getElementById('book-detail-header').textContent = b.name;
+    document.getElementById('book-detail-cover').innerHTML = `<img src="${b.cover}" alt="${b.name}">`;
+    document.getElementById('book-detail-title').textContent = b.name;
+    document.getElementById('book-detail-price').textContent = b.price;
+    document.getElementById('book-detail-price').style.color = b.isFree ? '#2D6A4F' : '';
+    document.getElementById('book-detail-desc').textContent = b.desc;
+
+    goPage('page-book-detail');
+  }
+
+  document.getElementById('book-detail-order-btn').addEventListener('click', () => {
+    document.getElementById('phone-modal').classList.add('show');
+  });
+
+  function closePhoneModal() {
+    document.getElementById('phone-modal').classList.remove('show');
+    document.getElementById('phone-input').value = "";
+  }
+
+  function confirmOrder() {
+    const phone = document.getElementById('phone-input').value.trim();
+    if (!phone || phone.length < 7) {
+      showToast("Iltimos, telefon raqamingizni kiriting");
+      return;
+    }
+    const b = BOOKS_DATA[currentBookId];
+    sendToBot('order_book', { bookId: currentBookId, bookName: b.name, price: b.price, phone: phone });
+    closePhoneModal();
+    showToast("✅ Buyurtmangiz qabul qilindi! Tez orada bog'lanamiz.");
+  }
+
+  // ---- Online dars: daraja bo'yicha kontent ----
+  const LESSONS = {
+    "초급": [
+      {
+        title: "1-dars: Salomlashish va o'zini tanitish",
+        text: "안녕하세요, 제 이름은 ... 입니다 kabi asosiy iboralar va talaffuz qoidalari.",
+        video: "https://youtu.be/GWaOpcoEHdU?si=3RjfRBvDnR0Kydx0",
+        book: "https://t.me/korea_book/13859"
+      },
+      {
+        title: "2-dars: Sonlar va kun-tartibi",
+        text: "하나, 둘, 셋 — koreys va xitoycha kelib chiqishi bo'lgan sonlar, vaqt va sana bildirish.",
+        video: "https://youtu.be/Q6jrLp9lXa0?si=FmqoPZ4UE66aTkyo",
+        book: "https://t.me/korea_book/13745"
+      }
+    ],
+    "중급": [
+      {
+        title: "1-dars: '~는 것 같다' va taxmin qilish",
+        text: "Fikrni yumshatish va taxmin bildirish uchun ishlatiladigan asosiy konstruksiyalar.",
+        video: "https://youtu.be/0yJDymAvE0Q?si=xLsoORcMgV1vMcTt",
+        book: "https://t.me/korea_book/13745"
+      },
+      {
+        title: "2-dars: Sabab-natija konstruksiyalari",
+        text: "'~기 때문에', '~아서/어서' kabi sabab bildiruvchi grammatikalar qiyosi.",
+        video: "https://youtu.be/mElwIlwiubY?si=JcqXsRWVM8aj_MvP",
+        book: "https://t.me/korea_book/13859"
+      }
+    ],
+    "고급": [
+      {
+        title: "1-dars: Rasmiy va akademik uslub",
+        text: "'~다시피', '~을지언정' kabi yuqori darajadagi konstruksiyalar va ulardan foydalanish.",
+        video: "https://youtu.be/mElwIlwiubY?si=JcqXsRWVM8aj_MvP",
+        book: "https://t.me/korea_book/13859"
+      },
+      {
+        title: "2-dars: Yangiliklar va jamoatchilik fikri",
+        text: "'여론', '대두되다' kabi yangiliklarda tez-tez uchraydigan so'z va iboralar.",
+        video: "https://youtu.be/0yJDymAvE0Q?si=xLsoORcMgV1vMcTt",
+        book: "https://t.me/korea_book/13745"
+      }
+    ],
+    "TOPIK": [
+      {
+        title: "TOPIK I (초급) — Tinglash va o'qish",
+        text: "TOPIK I formatidagi namuna savollar, vaqt taqsimoti va strategiyalar.",
+        video: "https://youtu.be/GWaOpcoEHdU?si=3RjfRBvDnR0Kydx0",
+        book: "https://t.me/korea_book/13859"
+      },
+      {
+        title: "TOPIK II (중급–고급) — Yozma ekspressiya",
+        text: "Insho yozish tuzilmasi, baholash mezonlari va tipik xatolarni bartaraf etish.",
+        video: "https://youtu.be/0yJDymAvE0Q?si=xLsoORcMgV1vMcTt",
+        book: "https://t.me/korea_book/13745"
+      }
+    ]
+  };
+
+  function goLevel(level) {
+    const wrap = document.getElementById('level-detail');
+    const label = document.getElementById('level-detail-label');
+    const content = document.getElementById('level-detail-content');
+
+    label.textContent = level + " — darslar";
+    content.innerHTML = "";
+
+    const lessons = LESSONS[level] || [];
+    if (lessons.length === 0) {
+      content.innerHTML = '<div class="empty"><span class="emoji">📭</span>Hozircha dars qo\\'shilmagan</div>';
+    } else {
+      lessons.forEach(l => {
+        const div = document.createElement('div');
+        div.className = 'lesson-item';
+        div.innerHTML = `
+          <h4>${l.title}</h4>
+          <p>${l.text}</p>
+          <div class="lesson-links">
+            <a class="lesson-link video" href="${l.video}" target="_blank">🎬 Video dars</a>
+            <a class="lesson-link book" href="${l.book}" target="_blank">📚 Matn / PDF</a>
+          </div>
+        `;
+        content.appendChild(div);
+      });
+    }
+    wrap.style.display = 'block';
+    wrap.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ---- Admin statistikasi: botdan ma'lumot so'rash ----
+  function loadAdminStats() {
+    sendToBot('get_admin_stats');
+    // Demo statik ko'rinish (bot tomondan kelganda yangilanadi)
+    document.getElementById('stat-bank-status').textContent = "So'rov yuborildi";
+  }
+
+  // Bot tomonidan yuboriladigan ma'lumotlarni qabul qilish (agar bot
+  // window.parent orqali postMessage yuborsa)
+  window.addEventListener('message', (e) => {
+    try {
+      const data = JSON.parse(e.data);
+      if (data.type === 'admin_stats') {
+        document.getElementById('stat-users').textContent = data.users ?? '—';
+        document.getElementById('stat-cho').textContent = data.cho ?? '—';
+        document.getElementById('stat-jung').textContent = data.jung ?? '—';
+        document.getElementById('stat-go').textContent = data.go ?? '—';
+        document.getElementById('stat-bank-cho').textContent = data.bank_cho ?? '—';
+        document.getElementById('stat-bank-jung').textContent = data.bank_jung ?? '—';
+        document.getElementById('stat-bank-go').textContent = data.bank_go ?? '—';
+        document.getElementById('stat-bank-status').textContent = data.bank_cho ? "Yuklangan" : "Yuklanmagan";
+      }
+    } catch (err) {}
+  });
+</script>
+
+</body>
+</html>
